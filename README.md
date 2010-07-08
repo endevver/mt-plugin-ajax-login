@@ -58,12 +58,12 @@ To make this example work, you will need to add the following to your `<html>` h
 
 Then add this in your theme's javascript:
 
-   function signInSubmitHandler(e) {
-     var f = $(this);
-     var id = f.attr('id');
-     $(this).append('<div class="spinner"></div><div class="spinner-status"></div>');
-     var spinner_selector = '#'+id+' .spinner, #'+id+' .spinner-status';
-     $(this).ajaxSubmit({
+    function signInSubmitHandler(e) {
+      var f = $(this);
+      var id = f.attr('id');
+      $(this).append('<div class="spinner"></div><div class="spinner-status"></div>');
+      var spinner_selector = '#'+id+' .spinner, #'+id+' .spinner-status';
+      $(this).ajaxSubmit({
         contentType: 'application/x-www-form-urlencoded; charset=utf-8',
         iframe: false,
         type: 'post',
@@ -82,12 +82,12 @@ Then add this in your theme's javascript:
               f.find('p.error').html(data.message).fadeIn('fast');
             }
         }
-     });
-     return false;
-   };
-   $(document).ready( function() {
-     $('form.logged-out').submit( signInSubmitHandler );
-   });
+      });
+      return false;
+    };
+    $(document).ready( function() {
+      $('form.logged-out').submit( signInSubmitHandler );
+    });
 
 ## CSS
 
@@ -95,24 +95,24 @@ This following CSS will help produce the spinner graphic that appears during log
 
 *The spinner-login.gif file is packaged with this plugin*
 
-  /* Spinners ---------------------------------------------------------------- */
-
-  .spinner,
-  .spinner-status {
-    display: none;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100% !important;
-    height: 100% !important;
-    background: transparent url(../images/spinner-login.gif) no-repeat center center;
-  }
-  .spinner {
-    filter:alpha(opacity=5);
-    -moz-opacity:.5;
-    opacity:.5;
-    background: #fff;
-  }
+    /* Spinners ---------------------------------------------------------------- */
+    
+    .spinner,
+    .spinner-status {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100% !important;
+      height: 100% !important;
+      background: transparent url(../images/spinner-login.gif) no-repeat center center;
+    }
+    .spinner {
+      filter:alpha(opacity=5);
+      -moz-opacity:.5;
+      opacity:.5;
+      background: #fff;
+    }
 
 # Getting Help
 
