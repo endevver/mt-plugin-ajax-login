@@ -2,6 +2,12 @@ This plugin provides a JSON interface to theme developers who wish to enable AJA
 
 We have provided sample HTML, template code, and javascript to make integration easier. If you need additional assistance we recommend contacting a qualified Movable Type consultant.
 
+# Known Issues
+
+Here is a list of known issues and things this plugin has not been tested with:
+
+* This has not been tested against an non-native MT login auth driver (e.g. LDAP or otherwise). For these drivers, this plugin is almost certainly not going to work in certain circumstances. Please consult Endevver for help.
+
 # JSON Interface
 
 ## Input Parameters
