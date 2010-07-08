@@ -2,6 +2,12 @@ This plugin provides a JSON interface to theme developers who wish to enable AJA
 
 We have provided sample HTML, template code, and javascript to make integration easier. If you need additional assistance we recommend contacting a qualified Movable Type consultant.
 
+# Why Use this Plugin?
+
+Movable Type comes with what appears to be an ajax login experience. It appears this way because when you click "login" on a blog, a little spinner appears. Spinners mean AJAX right? Well yes. But what is happening is not logging in. The system MT currently has was developed to assist users who were accessing multiple blogs across multiple domains all from the same install. Therefore what is actually happening while the spinner graphic spins is that a little login gnome goes to the central MT install to see if an active session exists for the current user. If it does, the session is magically transported by unicorns to the blog you are on. If there is not, the user is redirected to a login page.
+
+This plugin on the other hand exposes an interface whereby a user can transmit a username/password combo to the central install to actually be authenticated. So if you want to be able to actually log a user in (e.g. enter a username and password) via a lightbox, or someother form on your page, without requiring them to go to the main MT install to do so, then this plugin will be required.
+
 # Known Issues
 
 Here is a list of known issues and things this plugin has not been tested with:
