@@ -2,7 +2,8 @@ id: AJAXLogin
 name: AJAX Login
 plugin_author: 'Endevver, LLC.'
 description: "Provides Movable Type with a framework to support logging in via AJAX." 
-version: 0.9
+version: 0.9.1
+static_version: 1
 
 applications:
   comments:

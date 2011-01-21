@@ -8,6 +8,63 @@ Movable Type comes with what appears to be an ajax login experience. It appears 
 
 This plugin on the other hand exposes an interface whereby a user can transmit a username/password combo to the central install to actually be authenticated. So if you want to be able to actually log a user in (e.g. enter a username and password) via a lightbox, or someother form on your page, without requiring them to go to the main MT install to do so, then this plugin will be required.
 
+# Prerequisites 
+
+This plugin requires a number of components and templates in order to work properly. Many of these have been bundled and packaged with this plugin and should be installed for you automatically, provided the necessary prerequisites are installed.
+
+* Config Assistant 2.0 or greater
+
+You also need to create an index template required by the jquery.mtauth.js plugin. This template can be called whatever you want. Its output filename is recommended to be `mt-config.js`. 
+
+## MT Config Index Template
+
+This file can also be found in `plugins/AJAXLogin/templates/javascript_mt.mtml`.
+
+    //
+    // This file defines blog variables and phrases which are used by 
+    // javascript functions.
+    //
+    var mt;
+    mt = {
+      cookie: {
+        name: "<$mt:UserSessionCookieName$>",
+        domain: "<$mt:UserSessionCookieDomain$>",
+        path: "<$mt:UserSessionCookiePath$>",
+        timeout: <$mt:UserSessionCookieTimeout$>
+      },
+      links: {
+        <mt:ignore>signUp: '<$mt:CGIPath$><$mt:CommunityScript$>?__mode=register&blog_id=<$mt:BlogID$>&return_to=<$mt:BlogURL$>',</mt:ignore>
+        signIn: '<$mt:SignInLink$>',
+        signOut: '<$mt:SignOutLink$>'
+        <mt:ignore>,editProfile: '<$mt:CGIPath$><$mt:CommunityScript$>?__mode=edit&blog_id=<$mt:BlogID$>&return_to=' + encodeURIComponent(document.URL)</mt:ignore>
+      },
+      blog: {
+        id: <$mt:BlogID$>,
+        url: '<$mt:BlogURL encode_url="1"$>',
+        staticWebPath: '<$mt:StaticWebPath$>',
+        adminScript: '<$mt:AdminScript$>',
+        comments: {
+            script: '<$mt:CGIPath$><$mt:CommentScript$>',
+            armor: '<$mt:BlogSitePath encode_sha1="1"$>',
+            accepted: <mt:IfCommentsAccepted>1<mt:Else>0</mt:IfCommentsAccepted>,
+            captchaFields: '<$mt:CaptchaFields$>'
+        },
+<mt:ignore>
+        community: {
+            script: '<$mt:CGIPath$><$mt:CommunityScript$>',
+            ifAnonymousRecommendAllowed: <mt:IfAnonymousRecommendAllowed>1<mt:Else>0</mt:IfAnonymousRecommendAllowed>
+        },
+</mt:ignore>
+        pings: {
+            accepted: <mt:IfPingsAccepted>1<mt:Else>0</mt:IfPingsAccepted>
+        },
+        registration: {
+            required: <mt:IfRegistrationRequired>1<mt:Else>0</mt:IfRegistrationRequired>,
+            allowed: <mt:IfRegistrationAllowed>1<mt:Else>0</mt:IfRegistrationAllowed>
+        }
+      }
+    };
+
 # Known Issues
 
 Here is a list of known issues and things this plugin has not been tested with:
@@ -56,7 +113,6 @@ Here is a listing of possible status messages this plugin might return.
             <li class="pkg"><label>Password</label><br /><input type="password" name="password" /></li>
             <li class="pkg"><input type="submit" value="Login" class="button" /></li>
           </ul>
-          <p class="forgot"><a href="<$mt:AdminCGIPath$><$mt:CommentScript$>?__mode=start_recover&amp;blog_id=<$mt:BlogID escape="url"$>&amp;return_to=<$mt:EntryPermalink escape="url"$>">Forgot your password?</a></p>
         </div>
       </div><!-- //end sign-in -->
     </form>
@@ -67,6 +123,7 @@ To make this example work, you will need to add the following to your `<html>` h
 
     <script src="<mt:StaticWebPath>jquery/jquery.js" type="text/javascript"></script>   
     <script type="text/javascript" src="<$mt:StaticWebPath$>jquery/jquery.form.js"></script>
+    <script type="text/javascript" src="<$mt:PluginStaticWebPath component="AJAXLogin"$>jquery.mtauth.js"></script>
 
 Then add this in your theme's javascript:
 
@@ -86,8 +143,11 @@ Then add this in your theme's javascript:
         },
         success: function(data) {
             if (data.status == 1) {
+              alert("User successfully logged in.");
               var u = $.fn.movabletype.fetchUser();
-              f.fadeOut('fast',function() { f.parent().find('form.logged-in').fadeIn('fast'); });
+              f.fadeOut('fast',function() { 
+                f.parent().find('form.logged-in').fadeIn('fast'); 
+              });
             } else {
               alert("login failure");
               $(spinner_selector).fadeOut('fast');
@@ -108,7 +168,9 @@ This following CSS will help produce the spinner graphic that appears during log
 *The spinner-login.gif file is packaged with this plugin*
 
     /* Spinners ---------------------------------------------------------------- */
-    
+    #login-form li {
+      list-style: none;
+    }    
     .spinner,
     .spinner-status {
       display: none;
@@ -117,7 +179,7 @@ This following CSS will help produce the spinner graphic that appears during log
       left: 0;
       width: 100% !important;
       height: 100% !important;
-      background: transparent url(../images/spinner-login.gif) no-repeat center center;
+      background: transparent url(<$mt:PluginStaticWebPath component="AJAXLogin"$>spinner-login.gif) no-repeat center center;
     }
     .spinner {
       filter:alpha(opacity=5);
@@ -125,6 +187,16 @@ This following CSS will help produce the spinner graphic that appears during log
       opacity:.5;
       background: #fff;
     }
+
+# Sample Index Template
+
+You can find a complete sample index template to test this plugin out for yourself. The file is located in `plugins/AJAXLogin/templates/sample_index.mtml`. Install its contents into an index template you create yourself. The only modification you will need to make are the changes to necessary to point the web page at the MT Config Javascript file you also installed. Look for this code:
+
+    <script type="text/javascript" src="<$mt:BlogURL$>mt.js"></script>
+
+And make any changes necessary to have it reference the `mt-config.js` file you installed separately. Like so perhaps:
+
+    <script type="text/javascript" src="<$mt:BlogURL$>mt-config.js"></script>
 
 # Getting Help
 
@@ -143,7 +215,7 @@ http://www.endevver.com/
 
 # Copyright
 
-Copyright 2010, Endevver, LLC. All rights reserved.
+Copyright 2010-2011, Endevver, LLC. All rights reserved.
 
 # License
 

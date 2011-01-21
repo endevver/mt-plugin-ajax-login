@@ -1,0 +1,88 @@
+<html>
+  <head>
+    <title>AJAX Login Test</title>
+    <style>
+      #login-form li {
+        list-style: none;
+      }
+      #hidden-element {
+        display: none;
+      }
+    .spinner,
+    .spinner-status {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100% !important;
+      height: 100% !important;
+      background: transparent url(<mt:PluginStaticWebPath component="AJAXLogin">spinner-login.gif) no-repeat center center;
+    }
+    .spinner {
+      filter:alpha(opacity=5);
+      -moz-opacity:.5;
+      opacity:.5;
+      background: #fff;
+    </style>
+    <script src="<mt:StaticWebPath>jquery/jquery.js" type="text/javascript"></script>
+    <script type="text/javascript" src="<$mt:StaticWebPath$>jquery/jquery.form.js"></script>
+    <script type="text/javascript" src="<$mt:BlogURL$>mt.js"></script>
+    <script type="text/javascript" src="<$mt:PluginStaticWebPath component="MidCentury"$>jquery.mtauth.js"></script>
+    <script type="text/javascript">
+    function signInSubmitHandler(e) {
+      var f = $(this);
+      var id = f.attr('id');
+      $(this).append('<div class="spinner"></div><div class="spinner-status"></div>');
+      var spinner_selector = '#'+id+' .spinner, #'+id+' .spinner-status';
+      $(this).ajaxSubmit({
+        contentType: 'application/x-www-form-urlencoded; charset=utf-8',
+        iframe: false,
+        type: 'post',
+        dataType: 'json',
+        clearForm: true,
+        beforeSubmit: function(formData, jqForm, options) {
+          $(spinner_selector).fadeIn('fast').css('height',f.height());
+        },
+        success: function(data) {
+            if (data.status == 1) {
+              alert("Logged in");
+              var u = $.fn.movabletype.fetchUser();
+              f.fadeOut('fast',function() { f.parent().find('form.logged-in').fadeIn('fast'); });
+              $('#hidden-element').show();
+            } else {
+              alert("Login failure: " + data.message);
+              $(spinner_selector).fadeOut('fast');
+              f.find('p.error').html(data.message).fadeIn('fast');
+            }
+        }
+      });
+      return false;
+    };
+    $(document).ready( function() {
+      $('form.logged-out').submit( signInSubmitHandler );
+    });
+    </script>
+  </head>
+  <body>
+
+    <form method="post" action="<$mt:AdminCGIPath$><$mt:CommentScript$>" id="login-form" class="logged-out">
+      <div class="sign-in">
+        <div class="inner pkg">
+          <p class="error"></p>
+          <input type="hidden" name="__mode" value="do_ajax_login" />
+          <input type="hidden" name="blog_id" value="<$mt:BlogID$>" />
+          <ul class="pkg">
+            <li class="pkg"><label>Username</label><br /><input type="text" name="username" /></li>
+            <li class="pkg"><label>Password</label><br /><input type="password" name="password" /></li>
+            <li class="pkg"><input type="submit" value="Login" class="button" /></li>
+          </ul>
+        </div>
+      </div><!-- //end sign-in -->
+    </form>
+
+    <div id="hidden-element">
+       SHOW ME on LOGIN
+    </div>
+
+  </body>
+</html>
