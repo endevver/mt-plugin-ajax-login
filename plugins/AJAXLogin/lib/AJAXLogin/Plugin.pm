@@ -69,9 +69,12 @@ sub ajax_login {
         }
         MT::Auth->new_login( $app, $commenter );
         if ( $app->_check_commenter_author( $commenter, $blog_id ) ) {
-            $app->make_commenter_session($commenter);
+            my $session_key = $app->make_commenter_session($commenter);
+            my $session_state = session_state($session_key, $commenter, $blog, $blog_id);
             return _send_json_response( $app,
-                { status => 1, message => "session created" } );
+                { status => 1, message => "session created",
+                  session_key => $session_key,
+                  user => $session_state } );
 
             #return $app->redirect_to_target;
         }
@@ -110,6 +113,63 @@ sub ajax_login {
     };
     return _send_json_response( $app, $response );
 
+}
+
+#modified from MT::App::session_state
+sub session_state {
+    my ( $session_key, $commenter, $blog, $blog_id ) = @_;
+    my $c;
+    
+    if ( $session_key && $commenter ) {
+        $c = {
+            sid     => $session_key,
+            name    => $commenter->nickname || '(Display Name not set)',
+            url     => $commenter->url,
+            email   => $commenter->email,
+            userpic => scalar $commenter->userpic_url,
+            profile => "",                              # profile link url
+            is_authenticated => 1,
+            is_author =>
+                ( $commenter->type == MT::Author::AUTHOR() ? 1 : 0 ),
+            is_trusted       => 0,
+            is_anonymous     => 0,
+            can_post         => 0,
+            can_comment      => 0,
+            is_banned        => 0,
+        };
+        if ( $blog_id && $blog ) {
+            my $blog_perms = $commenter->blog_perm($blog_id);
+            my $banned = $commenter->is_banned($blog_id) ? 1 : 0;
+            $banned = 0 if $blog_perms && $blog_perms->can_administer;
+            $banned ||= 1 if $commenter->status == MT::Author::BANNED();
+            $c->{is_banned} = $banned;
+
+            # FIXME: These may not be accurate in 'SingleCommunity' mode...
+            my $can_comment = $banned ? 0 : 1;
+            $can_comment = 0
+                unless $blog->allow_unreg_comments
+                    || $blog->allow_reg_comments;
+            $c->{can_comment} = $can_comment;
+            $c->{can_post}
+                = ( $blog_perms && $blog_perms->can_create_post ) ? 1 : 0;
+            $c->{is_trusted} =
+                ( $commenter->is_trusted($blog_id) ? 1 : 0 ),
+        }
+    }
+
+    unless ($c) {
+        my $can_comment = $blog && $blog->allow_anon_comments ? 1 : 0;
+        $c = {
+            is_authenticated => 0,
+            is_trusted       => 0,
+            is_anonymous     => 1,
+            can_post         => 0,            # no anonymous posts
+            can_comment      => $can_comment,
+            is_banned        => 0,
+        };
+    }
+
+    return $c;
 }
 
 sub _send_json_response {
