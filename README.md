@@ -85,6 +85,21 @@ Here is a list of known issues and things this plugin has not been tested with:
 
 * `status` - Either "1" if successful, or "0" otherwise. If 0, then "message" will contain helpful debug information to indicate what might have happened.
 * `message` - A simple text message returned by the system to indicate what happened as a result of trying to login. 
+* `session_key` - The session id of the new login session.
+* `user` - Session state data, same info that get stored in default MT cookie:
+  * `sid` - session id
+  * `name` - display name
+  * `url` - user URL
+  * `email - user's email
+  * `userpic` - url to user's userpic image
+  * `is_authenticated` - boolean
+  * `is_author` - boolean
+  * `is_trusted` - boolean
+  * `is_anonymous` - boolean
+  * `can_post` - boolean
+  * `can_comment` - boolean
+  * `is_banned` - boolean
+   
 
 ## Status Messages
 
