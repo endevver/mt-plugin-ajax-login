@@ -11,13 +11,16 @@ sub ajax_login {
       or return $app->error(
         $app->translate( 'Can\'t load blog #[_1].', $blog_id ) );
     my $auths = $blog->commenter_authenticators;
+
     if ( $auths !~ /MovableType/ ) {
         $app->log(
             {
                 message => $app->translate(
-'Invalid commenter login attempt from [_1] to blog [_2](ID: [_3]) which does not allow Movable Type native authentication.',
-                    $name, $blog->name, $blog_id
-                ),
+                                'Invalid commenter login attempt from '
+                              . '[_1] to blog [_2](ID: [_3]) which does not allow '
+                              . 'Movable Type native authentication.',
+                              $name, $blog->name, $blog_id
+                           ),
                 level    => MT::Log::WARNING(),
                 category => 'login_commenter',
             }
@@ -27,15 +30,17 @@ sub ajax_login {
     }
 
     require MT::Auth;
-    my $ctx = MT::Auth->fetch_credentials( { app => $app } );
-    $ctx->{blog_id} = $blog_id;
-    my $result = MT::Auth->validate_credentials($ctx);
     my ( $message, $error );
+    my $ctx                       = MT::Auth->fetch_credentials( { app => $app } );
+    $ctx->{blog_id}               = $blog_id;
+    my $result                    = MT::Auth->validate_credentials($ctx);
+
     if (   ( MT::Auth::NEW_LOGIN() == $result )
         || ( MT::Auth::NEW_USER() == $result )
         || ( MT::Auth::SUCCESS() == $result ) )
     {
         my $commenter = $app->user;
+
         if ( $q->param('external_auth') && !$commenter ) {
             $app->param( 'name', $name );
             if ( MT::Auth::NEW_USER() == $result ) {
@@ -55,9 +60,9 @@ sub ajax_login {
                   )
                 {
                     return $app->login_form(
-                        error => $app->translate(
-'Successfully authenticated but signing up is not allowed.  Please contact system administrator.'
-                        )
+                        error => $app->translate( 'Successfully authenticated but '
+                                 . 'signing up is not allowed.  Please contact system '
+                                 . 'administrator.' )
                     ) unless $commenter;
                 }
                 else {
@@ -67,7 +72,9 @@ sub ajax_login {
                 }
             }
         }
+
         MT::Auth->new_login( $app, $commenter );
+
         if ( $app->_check_commenter_author( $commenter, $blog_id ) ) {
             $app->make_commenter_session($commenter);
             return _send_json_response( $app,
