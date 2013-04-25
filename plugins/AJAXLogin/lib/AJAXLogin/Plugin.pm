@@ -10,13 +10,14 @@ sub ajax_login {
     my $blog    = MT->model('blog')->load($blog_id)
       or return $app->error(
         $app->translate( 'Can\'t load blog #[_1].', $blog_id ) );
-    my $auths = $blog->commenter_authenticators;
+    my $auths   = $blog->commenter_authenticators;
+    my $via     = 'via AjaxLogin';
 
     if ( $auths !~ /MovableType/ ) {
         $app->log(
             {
                 message => $app->translate(
-                                'Invalid commenter login attempt from '
+                                'Invalid commenter login attempt '.$via.' from '
                               . '[_1] to blog [_2](ID: [_3]) which does not allow '
                               . 'Movable Type native authentication.',
                               $name, $blog->name, $blog_id
@@ -31,9 +32,9 @@ sub ajax_login {
 
     require MT::Auth;
     my ( $message, $error );
-    my $ctx                       = MT::Auth->fetch_credentials( { app => $app } );
-    $ctx->{blog_id}               = $blog_id;
-    my $result                    = MT::Auth->validate_credentials($ctx);
+    my $ctx         = MT::Auth->fetch_credentials( { app => $app } );
+    $ctx->{blog_id} = $blog_id;
+    my $result      = MT::Auth->validate_credentials($ctx);
 
     if (   ( MT::Auth::NEW_LOGIN() == $result )
         || ( MT::Auth::NEW_USER() == $result )
@@ -83,24 +84,20 @@ sub ajax_login {
             #return $app->redirect_to_target;
         }
         $error = $app->translate("Permission denied.");
-        $message =
-          $app->translate( "Login failed: permission denied for user '[_1]'",
-            $name );
+        $message = $app->translate(
+              "Login failed: permission denied for user '[_1]' $via", $name );
     }
     elsif ( MT::Auth::INVALID_PASSWORD() == $result ) {
-        $message =
-          $app->translate( "Login failed: password was wrong for user '[_1]'",
-            $name );
+        $message = $app->translate(
+            "Login failed: password was wrong for user '[_1]' $via", $name );
     }
     elsif ( MT::Auth::INACTIVE() == $result ) {
-        $message =
-          $app->translate( "Failed login attempt by disabled user '[_1]'",
-            $name );
+        $message = $app->translate(
+            "Failed login attempt by disabled user '[_1]' $via", $name );
     }
     else {
-        $message =
-          $app->translate( "Failed login attempt by unknown user '[_1]'",
-            $name );
+        $message = $app->translate(
+            "Failed login attempt by unknown user '[_1]' $via", $name );
     }
     $app->log(
         {
