@@ -5,7 +5,7 @@ use parent qw( MT::Plugin );
 
 sub ajax_login {
     my $app     = shift;
-    my $q       = $app->param;
+    my $q       = $app->can('query') ? $app->query : $app->param;
     my $name    = $q->param('username');
     my $blog_id = $q->param('blog_id');
     my $blog    = MT->model('blog')->load($blog_id)
