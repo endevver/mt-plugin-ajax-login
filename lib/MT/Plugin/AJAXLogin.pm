@@ -32,7 +32,7 @@ sub _ajax_login_mt5 {
                 category => 'login_commenter',
             }
         );
-        return _send_json_response( $app,
+        return $plugin->_send_json_response( $app,
             { status => 0, message => $app->translate('Invalid login.') } );
     }
 
@@ -51,7 +51,7 @@ sub _ajax_login_mt5 {
             if ( MT::Auth::NEW_USER() == $result ) {
                 $commenter = $app->_create_commenter_assign_role(
                     $q->param('blog_id') );
-                return _send_json_response( $app,
+                return $plugin->_send_json_response( $app,
                     { status => 0, message => $app->translate('Invalid login.') } )
                     unless $commenter;
             }
@@ -64,7 +64,7 @@ sub _ajax_login_mt5 {
                         || ( $blog && $blog->allow_commenter_regist ) )
                     )
                 {
-                    return _send_json_response( $app, {
+                    return $plugin->_send_json_response( $app, {
                                 status  => 0,
                                 message => $app->translate(
                                      'Successfully authenticated but signing '
@@ -74,7 +74,7 @@ sub _ajax_login_mt5 {
                     ) unless $commenter;
                 }
                 else {
-                    return _send_json_response( $app,
+                    return $plugin->_send_json_response( $app,
                             { status => 0,
                               message => $app->translate('You need to sign up first.') }
                     ) unless $commenter;
@@ -84,7 +84,7 @@ sub _ajax_login_mt5 {
         MT::Auth->new_login( $app, $commenter );
         if ( $app->_check_commenter_author( $commenter, $blog_id ) ) {
             $app->make_commenter_session($commenter);
-            return _send_json_response( $app,
+            return $plugin->_send_json_response( $app,
                 { status => 1, message => "session created" } );
         }
         $error   = $app->translate("Permission denied.");
@@ -145,7 +145,7 @@ sub _ajax_login_mt5 {
         status  => $result,
         message => $error || $app->translate("Invalid login"),
     };
-    return _send_json_response( $app, $response );
+    return $plugin->_send_json_response( $app, $response );
 
 }
 
@@ -174,7 +174,7 @@ sub _ajax_login_mt4 {
                 category => 'login_commenter',
             }
         );
-        return _send_json_response( $app,
+        return $plugin->_send_json_response( $app,
             { status => 0, message => $app->translate('Invalid login.') } );
     }
  
@@ -226,7 +226,7 @@ sub _ajax_login_mt4 {
  
         if ( $app->_check_commenter_author( $commenter, $blog_id ) ) {
             $app->make_commenter_session($commenter);
-            return _send_json_response( $app,
+            return $plugin->_send_json_response( $app,
                 { status => 1, message => "session created" } );
  
             #return $app->redirect_to_target;
@@ -260,11 +260,12 @@ sub _ajax_login_mt4 {
         status  => $result,
         message => $error || $app->translate("Invalid login"),
     };
-    return _send_json_response( $app, $response );
+    return $plugin->_send_json_response( $app, $response );
  
 }
  
 sub _send_json_response {
+    my $plugin           = shift;
     my ( $app, $result ) = @_;
     require JSON;
     my $json = JSON::objToJson($result);
