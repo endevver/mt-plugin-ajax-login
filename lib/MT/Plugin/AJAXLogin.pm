@@ -1,6 +1,7 @@
 package MT::Plugin::AJAXLogin;
 
 use strict;
+use parent qw( MT::Plugin );
 
 sub ajax_login {
     my $app     = shift;
