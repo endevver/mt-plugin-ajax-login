@@ -1,7 +1,7 @@
 package MT::Plugin::AJAXLogin;
 
 use strict;
-use parent qw( MT::Plugin );
+use base qw( MT::Plugin );
 
 sub ajax_login {
     my $plugin = $_[0]->component('AJAXLogin');
