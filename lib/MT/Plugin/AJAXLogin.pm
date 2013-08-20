@@ -3,12 +3,13 @@ package MT::Plugin::AJAXLogin;
 use strict;
 use parent qw( MT::Plugin );
 
+sub via { 'via AjaxLogin' }
+
 sub ajax_login {
     my $app     = shift;
     my $q       = $app->can('query') ? $app->query : $app->param;
     my $name    = $q->param('username');
     my $blog_id = $q->param('blog_id');
-    my $via     = 'via AjaxLogin';
 
     my $blog    = MT->model('blog')->load($blog_id)
       or return $app->errtrans( 'Can\'t load blog #[_1].', $blog_id );
@@ -72,19 +73,19 @@ sub ajax_login {
         }
         $error = $app->translate("Permission denied.");
         $message = $app->translate(
-              "Login failed: permission denied for user '[_1]' $via", $name );
+              "Login failed: permission denied for user '[_1]' ".via(), $name );
     }
     elsif ( MT::Auth::INVALID_PASSWORD() == $result ) {
         $message = $app->translate(
-            "Login failed: password was wrong for user '[_1]' $via", $name );
+            "Login failed: password was wrong for user '[_1]' ".via(), $name );
     }
     elsif ( MT::Auth::INACTIVE() == $result ) {
         $message = $app->translate(
-            "Failed login attempt by disabled user '[_1]' $via", $name );
+            "Failed login attempt by disabled user '[_1]' ".via(), $name );
     }
     else {
         $message = $app->translate(
-            "Failed login attempt by unknown user '[_1]' $via", $name );
+            "Failed login attempt by unknown user '[_1]' ".via(), $name );
     }
     $app->log(
         {
@@ -117,7 +118,7 @@ sub no_mt_authenticator {
     my $app = shift;
     $app->log({
         message => $app->translate(
-                        'Invalid commenter login attempt '.$via.' by '
+                        'Invalid commenter login attempt '.via().' by '
                       . '[_1] to blog [_2](ID: [_3]) which does not allow '
                       . 'Movable Type native authentication.',
                       $name, $blog->name, $blog_id
