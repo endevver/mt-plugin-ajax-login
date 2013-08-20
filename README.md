@@ -1,20 +1,44 @@
-This plugin provides a JSON interface to theme developers who wish to enable AJAX logins on their web site. What good is an AJAX login experience you ask? Well, such an experience would allow for a login form to be presented in a lightbox, or through some other javascript effect. It would allow your readers to login to a page without ever leaving the page.
+This plugin provides a JSON interface to theme developers who wish to enable
+AJAX logins on their web site. What good is an AJAX login experience you ask?
+Well, such an experience would allow for a login form to be presented in a
+lightbox, or through some other javascript effect. It would allow your readers
+to login to a page without ever leaving the page.
 
-We have provided sample HTML, template code, and javascript to make integration easier. If you need additional assistance we recommend contacting a qualified Movable Type consultant.
+We have provided sample HTML, template code, and javascript to make
+integration easier. If you need additional assistance we recommend contacting
+a qualified Movable Type consultant.
 
 # Why Use this Plugin?
 
-Movable Type comes with what appears to be an ajax login experience. It appears this way because when you click "login" on a blog, a little spinner appears. Spinners mean AJAX right? Well yes. But what is happening is not logging in. The system MT currently has was developed to assist users who were accessing multiple blogs across multiple domains all from the same install. Therefore what is actually happening while the spinner graphic spins is that a little login gnome goes to the central MT install to see if an active session exists for the current user. If it does, the session is magically transported by unicorns to the blog you are on. If there is not, the user is redirected to a login page.
+Movable Type comes with what appears to be an ajax login experience. It
+appears this way because when you click "login" on a blog, a little spinner
+appears. Spinners mean AJAX right? Well yes. But what is happening is not
+logging in. The system MT currently has was developed to assist users who were
+accessing multiple blogs across multiple domains all from the same install.
+Therefore what is actually happening while the spinner graphic spins is that a
+little login gnome goes to the central MT install to see if an active session
+exists for the current user. If it does, the session is magically transported
+by unicorns to the blog you are on. If there is not, the user is redirected to
+a login page.
 
-This plugin on the other hand exposes an interface whereby a user can transmit a username/password combo to the central install to actually be authenticated. So if you want to be able to actually log a user in (e.g. enter a username and password) via a lightbox, or someother form on your page, without requiring them to go to the main MT install to do so, then this plugin will be required.
+This plugin on the other hand exposes an interface whereby a user can transmit
+a username/password combo to the central install to actually be authenticated.
+So if you want to be able to actually log a user in (e.g. enter a username and
+password) via a lightbox, or someother form on your page, without requiring
+them to go to the main MT install to do so, then this plugin will be required.
 
 # Prerequisites 
 
-This plugin requires a number of components and templates in order to work properly. Many of these have been bundled and packaged with this plugin and should be installed for you automatically, provided the necessary prerequisites are installed.
+This plugin requires a number of components and templates in order to work
+properly. Many of these have been bundled and packaged with this plugin and
+should be installed for you automatically, provided the necessary
+prerequisites are installed.
 
 * Config Assistant 2.0 or greater
 
-You also need to create an index template required by the jquery.mtauth.js plugin. This template can be called whatever you want. Its output filename is recommended to be `mt-config.js`. 
+You also need to create an index template required by the jquery.mtauth.js
+plugin. This template can be called whatever you want. Its output filename is
+recommended to be `mt-config.js`.
 
 ## MT Config Index Template
 
@@ -67,9 +91,12 @@ This file can also be found in `templates/javascript_mt.mtml`.
 
 # Known Issues
 
-Here is a list of known issues and things this plugin has not been tested with:
+Here is a list of known issues and things this plugin has not been tested
+with:
 
-* This has not been tested against an non-native MT login auth driver (e.g. LDAP or otherwise). For these drivers, this plugin is almost certainly not going to work in certain circumstances. Please consult Endevver for help.
+* This has not been tested against an non-native MT login auth driver (e.g.
+  LDAP or otherwise). For these drivers, this plugin is almost certainly not
+  going to work in certain circumstances. Please consult Endevver for help.
 
 # JSON Interface
 
@@ -79,12 +106,15 @@ Here is a list of known issues and things this plugin has not been tested with:
 * `username` - The username of the user logging in.
 * `password` - The password of the user logging in.
 * `blog_id` - The ID of the blog being logged into.
-* `entry_id` - The ID of the entry being logged into in the event that the user is on an entry page.
+* `entry_id` - The ID of the entry being logged into in the event that the
+  user is on an entry page.
 
 ## Output Parameters
 
-* `status` - Either "1" if successful, or "0" otherwise. If 0, then "message" will contain helpful debug information to indicate what might have happened.
-* `message` - A simple text message returned by the system to indicate what happened as a result of trying to login. 
+* `status` - Either "1" if successful, or "0" otherwise. If 0, then "message"
+  will contain helpful debug information to indicate what might have happened.
+* `message` - A simple text message returned by the system to indicate what
+  happened as a result of trying to login.
 
 ## Status Messages
 
@@ -119,7 +149,8 @@ Here is a listing of possible status messages this plugin might return.
 
 ## jQuery/Javascript
 
-To make this example work, you will need to add the following to your `<html>` head section:
+To make this example work, you will need to add the following to your `<html>`
+head section:
 
     <script src="<mt:StaticWebPath>jquery/jquery.js" type="text/javascript"></script>   
     <script type="text/javascript" src="<$mt:StaticWebPath$>jquery/jquery.form.js"></script>
@@ -163,7 +194,8 @@ Then add this in your theme's javascript:
 
 ## CSS
 
-This following CSS will help produce the spinner graphic that appears during login:
+This following CSS will help produce the spinner graphic that appears during
+login:
 
 *The spinner-login.gif file is packaged with this plugin*
 
@@ -190,11 +222,16 @@ This following CSS will help produce the spinner graphic that appears during log
 
 # Sample Index Template
 
-You can find a complete sample index template to test this plugin out for yourself. The file is located in `templates/sample_index.mtml`. Install its contents into an index template you create yourself. The only modification you will need to make are the changes to necessary to point the web page at the MT Config Javascript file you also installed. Look for this code:
+You can find a complete sample index template to test this plugin out for
+yourself. The file is located in `templates/sample_index.mtml`. Install its
+contents into an index template you create yourself. The only modification you
+will need to make are the changes to necessary to point the web page at the MT
+Config Javascript file you also installed. Look for this code:
 
     <script type="text/javascript" src="<$mt:BlogURL$>mt.js"></script>
 
-And make any changes necessary to have it reference the `mt-config.js` file you installed separately. Like so perhaps:
+And make any changes necessary to have it reference the `mt-config.js` file
+you installed separately. Like so perhaps:
 
     <script type="text/javascript" src="<$mt:BlogURL$>mt-config.js"></script>
 
