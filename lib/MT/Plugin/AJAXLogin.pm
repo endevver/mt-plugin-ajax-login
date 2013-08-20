@@ -8,27 +8,14 @@ sub ajax_login {
     my $q       = $app->can('query') ? $app->query : $app->param;
     my $name    = $q->param('username');
     my $blog_id = $q->param('blog_id');
+    my $via     = 'via AjaxLogin';
+
     my $blog    = MT->model('blog')->load($blog_id)
       or return $app->errtrans( 'Can\'t load blog #[_1].', $blog_id );
     my $auths   = $blog->commenter_authenticators;
-    my $via     = 'via AjaxLogin';
 
-    if ( $auths !~ /MovableType/ ) {
-        $app->log(
-            {
-                message => $app->translate(
-                                'Invalid commenter login attempt '.$via.' from '
-                              . '[_1] to blog [_2](ID: [_3]) which does not allow '
-                              . 'Movable Type native authentication.',
-                              $name, $blog->name, $blog_id
-                           ),
-                level    => MT::Log::WARNING(),
-                category => 'login_commenter',
-            }
-        );
-        return _send_json_response( $app,
-            { status => 0, message => $app->translate('Invalid login.') } );
-    }
+    $auths =~ /MovableType/
+        or return $app->MT::Plugin::AJAXLogin::no_mt_authenticator;
 
     require MT::Auth;
     my ( $message, $error );
@@ -124,6 +111,22 @@ sub _send_json_response {
     $app->print($json);
     return $app->{no_print_body} = 1;
     return undef;
+}
+
+sub no_mt_authenticator {
+    my $app = shift;
+    $app->log({
+        message => $app->translate(
+                        'Invalid commenter login attempt '.$via.' by '
+                      . '[_1] to blog [_2](ID: [_3]) which does not allow '
+                      . 'Movable Type native authentication.',
+                      $name, $blog->name, $blog_id
+                   ),
+        level    => MT::Log::WARNING(),
+        category => 'login_commenter',
+    });
+    return _send_json_response( $app,
+        { status => 0, message => $app->translate('Invalid login.') } );
 }
 
 1;
