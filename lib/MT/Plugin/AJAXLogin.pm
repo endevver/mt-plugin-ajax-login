@@ -4,6 +4,17 @@ use strict;
 use parent qw( MT::Plugin );
 
 sub ajax_login {
+    my $plugin = $_[0]->component('AJAXLogin');
+    return $_[0]->product_version =~ m/^4/ ? $plugin->_ajax_login_mt4( @_ )
+                                           : $plugin->_ajax_login_mt5( @_ );
+}
+
+sub _ajax_login_mt5 {}
+
+# Mostly copied from MT 4.3.x's MT::App::Community::do_login
+# with changes for proper JSON returned response
+sub _ajax_login_mt4 {
+    my $plugin  = shift;
     my $app     = shift;
     my $q       = $app->can('query') ? $app->query : $app->param;
     my $name    = $q->param('username');
@@ -12,7 +23,7 @@ sub ajax_login {
       or return $app->errtrans( 'Can\'t load blog #[_1].', $blog_id );
     my $auths   = $blog->commenter_authenticators;
     my $via     = 'via AjaxLogin';
-
+ 
     if ( $auths !~ /MovableType/ ) {
         $app->log(
             {
@@ -29,19 +40,19 @@ sub ajax_login {
         return _send_json_response( $app,
             { status => 0, message => $app->translate('Invalid login.') } );
     }
-
+ 
     require MT::Auth;
     my ( $message, $error );
     my $ctx         = MT::Auth->fetch_credentials( { app => $app } );
     $ctx->{blog_id} = $blog_id;
     my $result      = MT::Auth->validate_credentials($ctx);
-
+ 
     if (   ( MT::Auth::NEW_LOGIN() == $result )
         || ( MT::Auth::NEW_USER() == $result )
         || ( MT::Auth::SUCCESS() == $result ) )
     {
         my $commenter = $app->user;
-
+ 
         if ( $q->param('external_auth') && !$commenter ) {
             $app->param( 'name', $name );
             if ( MT::Auth::NEW_USER() == $result ) {
@@ -73,14 +84,14 @@ sub ajax_login {
                 }
             }
         }
-
+ 
         MT::Auth->new_login( $app, $commenter );
-
+ 
         if ( $app->_check_commenter_author( $commenter, $blog_id ) ) {
             $app->make_commenter_session($commenter);
             return _send_json_response( $app,
                 { status => 1, message => "session created" } );
-
+ 
             #return $app->redirect_to_target;
         }
         $error = $app->translate("Permission denied.");
@@ -113,9 +124,9 @@ sub ajax_login {
         message => $error || $app->translate("Invalid login"),
     };
     return _send_json_response( $app, $response );
-
+ 
 }
-
+ 
 sub _send_json_response {
     my ( $app, $result ) = @_;
     require JSON;
