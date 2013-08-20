@@ -1,0 +1,13 @@
+name:           AJAX Login
+version:        0.9.2
+description:    Provides Movable Type with a framework to support logging in via AJAX.
+plugin_author:  "Endevver, LLC."
+static_version: 1
+plugin_class:   MT::Plugin::AJAXLogin
+id:             AJAXLogin
+key:            AJAXLogin
+
+applications:
+    comments:
+        methods:
+            do_ajax_login: $AJAXLogin::MT::Plugin::AJAXLogin::ajax_login
