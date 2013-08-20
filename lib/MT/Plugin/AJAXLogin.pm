@@ -9,8 +9,7 @@ sub ajax_login {
     my $name    = $q->param('username');
     my $blog_id = $q->param('blog_id');
     my $blog    = MT->model('blog')->load($blog_id)
-      or return $app->error(
-        $app->translate( 'Can\'t load blog #[_1].', $blog_id ) );
+      or return $app->errtrans( 'Can\'t load blog #[_1].', $blog_id );
     my $auths   = $blog->commenter_authenticators;
     my $via     = 'via AjaxLogin';
 
