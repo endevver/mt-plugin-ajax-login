@@ -18,7 +18,7 @@ You also need to create an index template required by the jquery.mtauth.js plugi
 
 ## MT Config Index Template
 
-This file can also be found in `plugins/AJAXLogin/templates/javascript_mt.mtml`.
+This file can also be found in `templates/javascript_mt.mtml`.
 
     //
     // This file defines blog variables and phrases which are used by 
@@ -190,7 +190,7 @@ This following CSS will help produce the spinner graphic that appears during log
 
 # Sample Index Template
 
-You can find a complete sample index template to test this plugin out for yourself. The file is located in `plugins/AJAXLogin/templates/sample_index.mtml`. Install its contents into an index template you create yourself. The only modification you will need to make are the changes to necessary to point the web page at the MT Config Javascript file you also installed. Look for this code:
+You can find a complete sample index template to test this plugin out for yourself. The file is located in `templates/sample_index.mtml`. Install its contents into an index template you create yourself. The only modification you will need to make are the changes to necessary to point the web page at the MT Config Javascript file you also installed. Look for this code:
 
     <script type="text/javascript" src="<$mt:BlogURL$>mt.js"></script>
 

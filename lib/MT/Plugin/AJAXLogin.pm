@@ -1,4 +1,4 @@
-package AJAXLogin::Plugin;
+package MT::Plugin::AJAXLogin;
 
 use strict;
 
