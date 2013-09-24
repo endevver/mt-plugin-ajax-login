@@ -160,7 +160,7 @@ sub _ajax_login_mt4 {
     my $blog    = MT->model('blog')->load($blog_id)
       or return $app->errtrans( 'Can\'t load blog #[_1].', $blog_id );
     my $auths   = $blog->commenter_authenticators;
- 
+
     if ( $auths !~ /MovableType/ ) {
         $app->log(
             {
@@ -177,19 +177,19 @@ sub _ajax_login_mt4 {
         return $plugin->_send_json_response( $app,
             { status => 0, message => $app->translate('Invalid login.') } );
     }
- 
+
     require MT::Auth;
     my ( $message, $error );
     my $ctx         = MT::Auth->fetch_credentials( { app => $app } );
     $ctx->{blog_id} = $blog_id;
     my $result      = MT::Auth->validate_credentials($ctx);
- 
+
     if (   ( MT::Auth::NEW_LOGIN() == $result )
         || ( MT::Auth::NEW_USER() == $result )
         || ( MT::Auth::SUCCESS() == $result ) )
     {
         my $commenter = $app->user;
- 
+
         if ( $q->param('external_auth') && !$commenter ) {
             $app->param( 'name', $name );
             if ( MT::Auth::NEW_USER() == $result ) {
@@ -221,14 +221,14 @@ sub _ajax_login_mt4 {
                 }
             }
         }
- 
+
         MT::Auth->new_login( $app, $commenter );
- 
+
         if ( $app->_check_commenter_author( $commenter, $blog_id ) ) {
             $app->make_commenter_session($commenter);
             return $plugin->_send_json_response( $app,
                 { status => 1, message => "session created" } );
- 
+
             #return $app->redirect_to_target;
         }
         $error = $app->translate("Permission denied.");
@@ -261,9 +261,10 @@ sub _ajax_login_mt4 {
         message => $error || $app->translate("Invalid login"),
     };
     return $plugin->_send_json_response( $app, $response );
- 
+
 }
- 
+
+
 sub _send_json_response {
     my $plugin           = shift;
     my ( $app, $result ) = @_;
