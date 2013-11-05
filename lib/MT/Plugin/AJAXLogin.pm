@@ -30,6 +30,7 @@ sub _ajax_login_mt5 {
                 ),
                 level    => MT::Log::WARNING(),
                 category => 'login_commenter',
+                class    => 'ajaxlogin',
             }
         );
         return $plugin->_send_json_response( $app,
@@ -111,6 +112,7 @@ sub _ajax_login_mt5 {
                 ),
                 level    => MT::Log::WARNING(),
                 category => 'login_user',
+                class    => 'ajaxlogin',
             }
         );
     }
@@ -137,6 +139,7 @@ sub _ajax_login_mt5 {
         {   message  => $message,
             level    => MT::Log::SECURITY(),
             category => 'login_commenter',
+            class    => 'ajaxlogin',
         }
     ) if $message;
     $ctx->{app} ||= $app;
@@ -172,6 +175,7 @@ sub _ajax_login_mt4 {
                            ),
                 level    => MT::Log::WARNING(),
                 category => 'login_commenter',
+                class    => 'ajaxlogin',
             }
         );
         return $plugin->_send_json_response( $app,
@@ -252,6 +256,7 @@ sub _ajax_login_mt4 {
             message  => 'AJAXLogin: '.$message,
             level    => MT::Log::WARNING(),
             category => 'login_commenter',
+            class    => 'ajaxlogin',
         }
     ) if $message;
     $ctx->{app} ||= $app;
