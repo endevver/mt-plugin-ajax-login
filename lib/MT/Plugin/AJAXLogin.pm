@@ -84,9 +84,15 @@ sub _ajax_login_mt5 {
         }
         MT::Auth->new_login( $app, $commenter );
         if ( $app->_check_commenter_author( $commenter, $blog_id ) ) {
-            $app->make_commenter_session($commenter);
+            # The SID is needed to log in with MT 4.38, 5.13, and 5.2+.
+            my $sid = $app->make_commenter_session($commenter);
             return $plugin->_send_json_response( $app,
-                { status => 1, message => "session created" } );
+                {
+                    status  => 1,
+                    message => "session created",
+                    sid     => $sid,
+                }
+            );
         }
         $error   = $app->translate("Permission denied.");
         $message = $app->translate(
@@ -149,7 +155,6 @@ sub _ajax_login_mt5 {
         message => $error || $app->translate("Invalid login"),
     };
     return $plugin->_send_json_response( $app, $response );
-
 }
 
 # Mostly copied from MT 4.3.x's MT::App::Community::do_login

@@ -80,7 +80,11 @@ jQuery.extend({ authchangeList: [], authHappened: false, needsAuth: false });
             return $.fn.movabletype.setUser(u); 
           } 
         }; 
-	if ( $.fn.movabletype.getUser() && $.fn.movabletype.getUser().is_authenticated ) {
+	if (
+    $.fn.movabletype.getUser()
+    && $.fn.movabletype.getUser().is_authenticated
+    && $.fn.movabletype.getUser().sid
+  ) {
 	  // user is logged into current domain...
 	  var url = document.URL;
 	  url = url.replace(/#.+$/, '');
@@ -91,7 +95,8 @@ jQuery.extend({ authchangeList: [], authHappened: false, needsAuth: false });
 	  // we aren't using AJAX for this, since we may have to request
 	  // from a different domain. JSONP to the rescue.
 	  mtFetchedUser = true;
-	  var url = mt.blog.comments.script + '?__mode=session_js&blog_id=' + mt.blog.id + '&jsonp=?';
+    var url = mt.blog.comments.script + '?__mode=userinfo&blog_id=' + mt.blog.id
+      + '&sid=' + jQuery('input[name="sid"]').val() + '&jsonp=?';
 	  // this is asynchronous, so it will return prior to the user being saved
 	  $.getJSON(url,function(data) { 
 	      cb(data) 

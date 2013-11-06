@@ -46,6 +46,7 @@
         success: function(data) {
             if (data.status == 1) {
               alert("Logged in");
+              jQuery('input[name="sid"]').val( data.sid );
               var u = $.fn.movabletype.fetchUser();
               f.fadeOut('fast',function() { f.parent().find('form.logged-in').fadeIn('fast'); });
               $('#hidden-element').show();
@@ -71,6 +72,7 @@
           <p class="error"></p>
           <input type="hidden" name="__mode" value="do_ajax_login" />
           <input type="hidden" name="blog_id" value="<$mt:BlogID$>" />
+          <input type="hidden" name="sid" value="" />
           <ul class="pkg">
             <li class="pkg"><label>Username</label><br /><input type="text" name="username" /></li>
             <li class="pkg"><label>Password</label><br /><input type="password" name="password" /></li>
